@@ -91,10 +91,16 @@ jobs:
           value: ${{ github.repository }}
       - name: Install and Build 🔧
         run: |
+          set -eux
           sudo apt-get update && sudo apt-get install -y imagemagick
+          python3 --version
+          pip3 --version
+          pip3 install --upgrade pip setuptools wheel
           pip3 install --upgrade -r requirements.txt
+          pip3 show notebook || true
+          python3 -c "import importlib, sys; print('PYTHONPATH', sys.path); print('notebook', importlib.util.find_spec('notebook'))"
           export JEKYLL_ENV=production
-          bundle exec jekyll build
+          bundle exec jekyll build --verbose
       - name: Purge unused CSS 🧹
         run: |
           npm install -g purgecss
