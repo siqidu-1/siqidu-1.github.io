@@ -97,23 +97,23 @@ jobs:
           pip3 --version
           pip3 install --upgrade pip setuptools wheel
           pip3 install --upgrade -r requirements.txt
-            pip3 show notebook || true
-            python3 - <<'PY'
-      import importlib, sys, json
-      print('PYTHONPATH', sys.path)
-      print('importlib repr:', importlib)
-      print('importlib file:', getattr(importlib, '__file__', None))
-      print('importlib attrs sample:', sorted([a for a in dir(importlib) if a.startswith('util') or a in ('find_spec','import_module')]))
-      try:
-        print('importlib.util:', importlib.util)
-      except Exception as e:
-        print('importlib.util ERROR:', type(e).__name__, e)
-      try:
-        spec = importlib.util.find_spec('notebook') if hasattr(importlib, 'util') else None
-        print('notebook spec:', spec)
-      except Exception as e:
-        print('find_spec ERROR:', type(e).__name__, e)
-      PY
+          pip3 show notebook || true
+          python3 - <<'PY'
+import importlib, sys, json
+print('PYTHONPATH', sys.path)
+print('importlib repr:', importlib)
+print('importlib file:', getattr(importlib, '__file__', None))
+print('importlib attrs sample:', sorted([a for a in dir(importlib) if a.startswith('util') or a in ('find_spec','import_module')]))
+try:
+    print('importlib.util:', importlib.util)
+except Exception as e:
+    print('importlib.util ERROR:', type(e).__name__, e)
+try:
+    spec = importlib.util.find_spec('notebook') if hasattr(importlib, 'util') else None
+    print('notebook spec:', spec)
+except Exception as e:
+    print('find_spec ERROR:', type(e).__name__, e)
+PY
           export JEKYLL_ENV=production
           bundle exec jekyll build --verbose
       - name: Purge unused CSS 🧹
