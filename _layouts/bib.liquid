@@ -1,6 +1,10 @@
 ---
 ---
-<div class="row">
+<div class="row pub-entry"
+  {% if entry.category %} data-category="{{ entry.category | downcase | strip }}"{% endif %}
+  {% if entry.keywords %} data-keywords="{{ entry.keywords | downcase | strip }}"{% endif %}
+  data-selected="{{ entry.selected | default: 'false' }}"
+>
   {% if site.enable_publication_thumbnails %}
     <div class="col col-sm-2 abbr">
       {%- if entry.abbr -%}
@@ -48,7 +52,29 @@
   <!-- Entry bib key -->
   <div id="{{ entry.key }}" class="{% if site.enable_publication_thumbnails %}col-sm-8{% else %}col-sm-10{% endif %}">
     <!-- Title -->
-    <div class="title">{{ entry.title }}</div>
+    <div class="title">
+      {% if entry.html %}
+        {% if entry.html contains '://' %}
+          <a href="{{ entry.html }}">{{ entry.title }}</a>
+        {% else %}
+          <a href="{{ entry.html | prepend: '/assets/html/' | relative_url }}">{{ entry.title }}</a>
+        {% endif %}
+      {% elsif entry.pdf %}
+        {% if entry.pdf contains '://' %}
+          <a href="{{ entry.pdf }}">{{ entry.title }}</a>
+        {% else %}
+          <a href="{{ entry.pdf | prepend: '/assets/pdf/' | relative_url }}">{{ entry.title }}</a>
+        {% endif %}
+      {% elsif entry.url %}
+        <a href="{{ entry.url }}">{{ entry.title }}</a>
+      {% elsif entry.doi %}
+        <a href="https://doi.org/{{ entry.doi }}">{{ entry.title }}</a>
+      {% elsif entry.arxiv %}
+        <a href="http://arxiv.org/abs/{{ entry.arxiv }}">{{ entry.title }}</a>
+      {% else %}
+        {{ entry.title }}
+      {% endif %}
+    </div>
     <!-- Author -->
     <div class="author">
       {% assign author_array_size = entry.author_array | size %}
@@ -183,6 +209,23 @@
     </div>
     <div class="periodical">
       {{ entry.note | strip }}
+    </div>
+
+    <!-- Category / Keywords badges -->
+    <div class="pub-badges">
+      {% if entry.category %}
+        {% assign catlist = entry.category | split: ',' %}
+        {% for cat in catlist %}
+          {% assign cat_key = cat | strip | downcase | replace: ' ', '-' %}
+          <span class="badge category-badge" data-category="{{ cat_key }}">{{ cat | strip }}</span>
+        {% endfor %}
+      {% endif %}
+      {% if entry.keywords %}
+        {% assign kwlist = entry.keywords | split: ',' %}
+        {% for kw in kwlist %}
+          <span class="badge keyword-badge">{{ kw | strip }}</span>
+        {% endfor %}
+      {% endif %}
     </div>
 
     <!-- Links/Buttons -->
