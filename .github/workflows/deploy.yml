@@ -63,6 +63,7 @@ on:
 
 permissions:
   contents: write
+  pages: write
 
 jobs:
   deploy:
@@ -102,4 +103,17 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
+          branch: gh-pages
           folder: _site
+
+      - name: Ensure GitHub Pages is enabled
+        if: github.event_name != 'pull_request'
+        run: |
+          cat <<'EOF' > /tmp/pages.json
+          {"source":{"branch":"gh-pages","path":"/"}}
+          EOF
+          curl -L -X PUT \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            https://api.github.com/repos/${{ github.repository }}/pages \
+            -d @/tmp/pages.json
