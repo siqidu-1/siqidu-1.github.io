@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://yayale1.github.io/sitemap.xml
+Sitemap: https://siqidu-1.github.io/sitemap.xml
